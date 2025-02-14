@@ -1,10 +1,10 @@
 //
-//  SingleListDemo.swift
+//  Issue2352View.swift
 //  Kingfisher
 //
-//  Created by onevcat on 2022/09/21.
+//  Created by onevcat on 2025/02/04.
 //
-//  Copyright (c) 2022 Wei Wang <onevcat@gmail.com>
+//  Copyright (c) 2025 Wei Wang <onevcat@gmail.com>
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -28,23 +28,20 @@ import SwiftUI
 import Kingfisher
 
 @available(iOS 14.0, *)
-struct SingleListDemo: View {
+struct Issue2352View: View {
     var body: some View {
-        Text("This is a test case for #1988")
-        
         List {
-            ForEach(1...100, id: \.self) { idx in
-                KFImage(ImageLoader.sampleImageURLs.first)
-                    .resizable()
-                    .frame(width: 48, height: 48)
+            ForEach(0..<40, id: \.self) { row in
+                KFAnimatedImage
+                    .url(
+                        URL(string: "https://raw.githubusercontent.com/onevcat/Kingfisher-TestImages/refs/heads/master/DemoAppImage/GIF/jumping.gif")!
+                    )
+                    .backgroundDecode()
+                    .scaleFactor(UIScreen.main.scale)
+                    .scaledToFill()
+                    .frame(width: 50, height: 50)
+                    .clipShape(.circle)
             }
         }
-    }
-}
-
-@available(iOS 14.0, *)
-struct SingleListDemo_Previews: PreviewProvider {
-    static var previews: some View {
-        SingleListDemo()
     }
 }

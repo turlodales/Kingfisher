@@ -27,11 +27,17 @@
 import XCTest
 @testable import Kingfisher
 
-extension Int: CacheCostCalculable {
+extension Int {
     public var cacheCost: Int {
         return 1
     }
 }
+
+#if compiler(>=6)
+extension Int: @retroactive CacheCostCalculable { }
+#else
+extension Int: CacheCostCalculable { }
+#endif
 
 class MemoryStorageTests: XCTestCase {
 
@@ -69,7 +75,7 @@ class MemoryStorageTests: XCTestCase {
         XCTAssertEqual(storage.value(forKey: "1"), 1)
     }
 
-    func testStoreValueOverwritting() {
+    func testStoreValueOverwriting() {
         storage.store(value: 1, forKey: "1")
         XCTAssertEqual(storage.value(forKey: "1"), 1)
 

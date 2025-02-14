@@ -58,7 +58,7 @@ class ImageExtensionTests: XCTestCase {
         let options = ImageCreatingOptions()
         let image = KingfisherWrapper<KFCrossPlatformImage>.animatedImage(data: testImageGIFData, options: options)
         XCTAssertNotNil(image)
-        #if os(iOS) || os(tvOS)
+        #if os(iOS) || os(tvOS) || os(visionOS)
         XCTAssertEqual(image!.kf.imageFrameCount!, 8)
         #else
         XCTAssertEqual(image!.kf.images!.count, 8)
@@ -66,7 +66,7 @@ class ImageExtensionTests: XCTestCase {
         #endif
     }
 
-    #if os(iOS) || os(tvOS)
+    #if os(iOS) || os(tvOS) || os(visionOS)
     func testScaleForGIFImage() {
         let options = ImageCreatingOptions(scale: 2.0, duration: 0.0, preloadAll: false, onlyFirstFrame: false)
         let image = KingfisherWrapper<KFCrossPlatformImage>.animatedImage(data: testImageGIFData, options: options)
@@ -94,7 +94,7 @@ class ImageExtensionTests: XCTestCase {
         let options = ImageCreatingOptions()
         let image = KingfisherWrapper<KFCrossPlatformImage>.animatedImage(data: testImageSingleFrameGIFData, options: options)
         XCTAssertNotNil(image)
-        #if os(iOS) || os(tvOS)
+        #if os(iOS) || os(tvOS) || os(visionOS)
         XCTAssertEqual(image!.kf.imageFrameCount!, 1)
         #else
         XCTAssertEqual(image!.kf.images!.count, 1)
@@ -113,7 +113,7 @@ class ImageExtensionTests: XCTestCase {
         let preloadOptions = ImageCreatingOptions(preloadAll: true)
         let image = KingfisherWrapper<KFCrossPlatformImage>.animatedImage(data: testImageSingleFrameGIFData, options: preloadOptions)!
         XCTAssertNotNil(image, "The image should be initiated.")
-#if os(iOS) || os(tvOS)
+#if os(iOS) || os(tvOS) || os(visionOS)
         XCTAssertNil(image.kf.imageSource, "Image source should be nil")
 #endif
         XCTAssertEqual(image.kf.duration, image.kf.duration)
@@ -247,7 +247,7 @@ class ImageExtensionTests: XCTestCase {
     }
     
     func testDecodeScale() {
-        #if os(iOS) || os(tvOS)
+        #if os(iOS) || os(tvOS) || os(visionOS)
         let image = testImage
         XCTAssertEqual(image.size, CGSize(width: 64, height: 64))
         XCTAssertEqual(image.scale, 1.0)
@@ -278,7 +278,7 @@ class ImageExtensionTests: XCTestCase {
         XCTAssertNotNil(gifImage)
         XCTAssertEqual(gifImage!.kf.normalized, gifImage!)
         
-        #if os(iOS) || os(tvOS)
+        #if os(iOS) || os(tvOS) || os(visionOS)
         // No need to normalize up orientation image.
         let normalImage = testImage
         XCTAssertEqual(normalImage.imageOrientation, .up)
@@ -331,13 +331,39 @@ class ImageExtensionTests: XCTestCase {
 
     func testDownsamplingWithEdgeCaseSize() {
 
-        // Zero size would fail downsampling.
-        let nilImage = KingfisherWrapper<KFCrossPlatformImage>.downsampledImage(data: testImageData, to: .zero, scale: 1)
-        XCTAssertNil(nilImage)
+        // Zero size would fail downsampling before iOS 17.4.
+        let result = KingfisherWrapper<KFCrossPlatformImage>.downsampledImage(data: testImageData, to: .zero, scale: 1)
+        if #available(iOS 17.4, macOS 14.4, tvOS 17.4, *) {
+            XCTAssertEqual(result?.size, CGSize(width: 64, height: 64))
+        } else {
+            XCTAssertNil(result)
+        }
 
         let largerSize = CGSize(width: 100, height: 100)
         let largerImage = KingfisherWrapper<KFCrossPlatformImage>.downsampledImage(data: testImageData, to: largerSize, scale: 1)
         // You can not "downsample" an image to a larger size.
         XCTAssertEqual(largerImage?.size, CGSize(width: 64, height: 64))
     }
+
+    #if os(macOS)
+    func testSVGImageSize() {
+        let svgString = """
+        <?xml version="1.0" encoding="UTF-8"?>
+        <svg width="100px" height="200px" viewBox="0 0 100 200" version="1.1" xmlns="http://www.w3.org/2000/svg">
+            <rect width="100" height="200" fill="red"/>
+        </svg>
+        """
+        
+        guard let data = svgString.data(using: .utf8),
+              let image = NSImage(data: data)
+        else {
+            XCTFail("Failed to create image from SVG data")
+            return
+        }
+        
+        let size = image.kf.size
+        XCTAssertEqual(size.width, 100)
+        XCTAssertEqual(size.height, 200)
+    }
+    #endif
 }

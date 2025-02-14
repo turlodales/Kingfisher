@@ -35,7 +35,7 @@ class KingfisherOptionsInfoTests: XCTestCase {
         XCTAssertTrue(options.targetCache === nil)
         XCTAssertTrue(options.downloader === nil)
 
-#if os(iOS) || os(tvOS)
+#if os(iOS) || os(tvOS) || os(visionOS)
         switch options.transition {
         case .none: break
         default: XCTFail("The transition for empty option should be .None. But \(options.transition)")
@@ -99,7 +99,7 @@ class KingfisherOptionsInfoTests: XCTestCase {
         XCTAssertTrue(options.originalCache === cache)
         XCTAssertTrue(options.downloader === downloader)
 
-        #if os(iOS) || os(tvOS)
+        #if os(iOS) || os(tvOS) || os(visionOS)
         let transition = ImageTransition.fade(0.5)
         options.transition = transition
         switch options.transition {
@@ -146,14 +146,16 @@ class KingfisherOptionsInfoTests: XCTestCase {
     }
 }
 
-class TestModifier: ImageDownloadRequestModifier {
+final class TestModifier: ImageDownloadRequestModifier {
     func modified(for request: URLRequest) -> URLRequest? {
         return nil
     }
 }
 
-class TestRedirectHandler: ImageDownloadRedirectHandler {
-    func handleHTTPRedirection(for task: SessionDataTask, response: HTTPURLResponse, newRequest: URLRequest, completionHandler: @escaping (URLRequest?) -> Void) {
-        completionHandler(newRequest)
+final class TestRedirectHandler: ImageDownloadRedirectHandler {
+    func handleHTTPRedirection(
+        for task: Kingfisher.SessionDataTask, response: HTTPURLResponse, newRequest: URLRequest
+    ) async -> URLRequest? {
+        newRequest
     }
 }

@@ -27,7 +27,12 @@
 import XCTest
 @testable import Kingfisher
 
-extension String: DataTransformable {
+#if compiler(>=6)
+extension String: @retroactive DataTransformable { }
+#else
+extension String: DataTransformable { }
+#endif
+extension String {
     public func toData() throws -> Data {
         return data(using: .utf8)!
     }
@@ -185,8 +190,8 @@ class DiskStorageTests: XCTestCase {
         storage.config.usesHashedFileName = true
         let hashedFileName = storage.cacheFileName(forKey: key)
         XCTAssertNotEqual(hashedFileName, key)
-        // validation md5 hash of the key
-        XCTAssertEqual(hashedFileName, key.kf.md5)
+        // validation sha256 hash of the key
+        XCTAssertEqual(hashedFileName, key.kf.sha256)
 
         // fileName without hash
         storage.config.usesHashedFileName = false
@@ -202,8 +207,8 @@ class DiskStorageTests: XCTestCase {
         storage.config.autoExtAfterHashedFileName = true
         let hashedFileName = storage.cacheFileName(forKey: key)
         XCTAssertNotEqual(hashedFileName, key)
-        // validation md5 hash of the key
-        XCTAssertEqual(hashedFileName, key.kf.md5 + ".gif")
+        // validation sha256 hash of the key
+        XCTAssertEqual(hashedFileName, key.kf.sha256 + ".gif")
 
         // fileName without hash
         storage.config.usesHashedFileName = false
@@ -213,15 +218,15 @@ class DiskStorageTests: XCTestCase {
     
     func testConfigUsesHashedFileNameWithAutoExtAndProcessor() {
         // The key of an image with processor will be as this format.
-        let key = "test.jpeg@abc"
+        let key = "test.jpeg@com.onevcat.Kingfisher.DownsamplingImageProcessor"
         
         // hashed fileName
         storage.config.usesHashedFileName = true
         storage.config.autoExtAfterHashedFileName = true
         let hashedFileName = storage.cacheFileName(forKey: key)
         XCTAssertNotEqual(hashedFileName, key)
-        // validation md5 hash of the key
-        XCTAssertEqual(hashedFileName, key.kf.md5 + ".jpeg")
+        // validation sha256 hash of the key
+        XCTAssertEqual(hashedFileName, key.kf.sha256 + ".jpeg")
 
         // fileName without hash
         storage.config.usesHashedFileName = false

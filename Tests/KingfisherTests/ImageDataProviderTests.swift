@@ -30,8 +30,7 @@ import XCTest
 class ImageDataProviderTests: XCTestCase {
     
     func testLocalFileImageDataProvider() {
-        let fm = FileManager.default
-        let document = try! fm.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+        let document = try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
         let fileURL = document.appendingPathComponent("test")
         try! testImageData.write(to: fileURL)
         
@@ -44,16 +43,13 @@ class ImageDataProviderTests: XCTestCase {
         let exp = expectation(description: #function)
         provider.data { result in
             XCTAssertEqual(result.value, testImageData)
-            try! fm.removeItem(at: fileURL)
+            try! FileManager.default.removeItem(at: fileURL)
             exp.fulfill()
         }
 
         waitForExpectations(timeout: 1, handler: nil)
     }
     
-    #if swift(>=5.5)
-    #if canImport(_Concurrency)
-    @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
     func testLocalFileImageDataProviderAsync() async {
         let fm = FileManager.default
         let document = try! fm.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
@@ -70,9 +66,7 @@ class ImageDataProviderTests: XCTestCase {
         XCTAssertEqual(value, testImageData)
         try! fm.removeItem(at: fileURL)
     }
-    #endif
-    #endif
-    
+
     func testLocalFileImageDataProviderMainQueue() {
         let fm = FileManager.default
         let document = try! fm.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
@@ -83,19 +77,40 @@ class ImageDataProviderTests: XCTestCase {
         XCTAssertEqual(provider.cacheKey, fileURL.localFileCacheKey)
         XCTAssertEqual(provider.fileURL, fileURL)
         
-        var called = false
+        let called = LockIsolated(false)
         provider.data { result in
             XCTAssertEqual(result.value, testImageData)
-            try! fm.removeItem(at: fileURL)
-            called = true
+            try! FileManager.default.removeItem(at: fileURL)
+            called.setValue(true)
         }
 
-        XCTAssertTrue(called)
+        XCTAssertTrue(called.value)
     }
     
-    #if swift(>=5.5)
-    #if canImport(_Concurrency)
-    @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+    func testAVAssetImageDataProviderCacheKeyVariesForRemote() {
+        let remoteURL1 = URL(string: "https://example.com/1/hello.mp4")!
+        let remoteURL2 = URL(string: "https://example.com/2/hello.mp4")!
+        
+        let provider1 = AVAssetImageDataProvider(assetURL: remoteURL1, seconds: 10)
+        XCTAssertEqual(provider1.cacheKey, "https://example.com/1/hello.mp4_10.0")
+        
+        let provider2 = AVAssetImageDataProvider(assetURL: remoteURL2, seconds: 10)
+        XCTAssertNotEqual(provider1.cacheKey, provider2.cacheKey)
+    }
+    
+    // AVAssetImageDataProvider fix for appending to #1825
+    func testAVAssetImageDataProviderCacheKeyConsistForDifferentAppSandbox() {
+        let localURL1 = URL(string: "file:///Users/onevcat/Library/Developer/CoreSimulator/Devices/ABC/data/Containers/Bundle/Application/DEF/Kingfisher-Demo.app/video/hello.mp4")!
+        let localURL2 = URL(string: "file:///Users/onevcat/Library/Developer/CoreSimulator/Devices/ABC/data/Containers/Bundle/Application/XYZ/Kingfisher-Demo.app/video/hello.mp4")!
+        
+        let provider1 = AVAssetImageDataProvider(assetURL: localURL1, seconds: 10)
+        XCTAssertEqual(provider1.cacheKey, "\(URL.localFileCacheKeyPrefix)/Kingfisher-Demo.app/video/hello.mp4_10.0")
+    
+        let provider2 = AVAssetImageDataProvider(assetURL: localURL2, seconds: 10)
+        XCTAssertEqual(provider1.cacheKey, provider2.cacheKey)
+    }
+    
+
     func testLocalFileImageDataProviderMainQueueAsync() async {
         let fm = FileManager.default
         let document = try! fm.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
@@ -114,8 +129,6 @@ class ImageDataProviderTests: XCTestCase {
 
         XCTAssertTrue(called)
     }
-    #endif
-    #endif
     
     func testLocalFileCacheKey() {
         let url1 = URL(string: "file:///Users/onevcat/Library/Developer/CoreSimulator/Devices/ABC/data/Containers/Bundle/Application/DEF/Kingfisher-Demo.app/images/kingfisher-1.jpg")!
@@ -136,7 +149,7 @@ class ImageDataProviderTests: XCTestCase {
     
     func testLocalFileExplicitKey() {
         let url1 = URL(string: "file:///Users/onevcat/Library/Developer/CoreSimulator/Devices/ABC/data/Containers/Bundle/Application/DEF/Kingfisher-Demo.app/images/kingfisher-1.jpg")!
-        let imageResource = ImageResource(downloadURL: url1, cacheKey: "hello")
+        let imageResource = KF.ImageResource(downloadURL: url1, cacheKey: "hello")
         let source = imageResource.convertToSource()
         XCTAssertEqual(source.cacheKey, "hello")
     }

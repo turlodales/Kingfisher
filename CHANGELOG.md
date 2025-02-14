@@ -2,6 +2,230 @@
 
 -----
 
+## [8.2.0 - Snake Year](https://github.com/onevcat/Kingfisher/releases/tag/8.2.0) (2025-02-05)
+
+#### Add
+* Add a `ThumbnailImageDataProvider` to get a thumbnail image from a URL directly with `CGImageSourceCreateThumbnailAtIndex`. @onevcat [#2349](https://github.com/onevcat/Kingfisher/pull/2349)
+* Add iOS-only XCFramework distribution for smaller package size when only iOS platform is needed. You can download it from the Release page. @onevcat [#2350](https://github.com/onevcat/Kingfisher/pull/2350)
+
+#### Fix
+* Fix a performance issue when referring the same animated image source, which was introduced in 8.1.4. Special thanks to @pNre for the report and @yeatse for the quick fix. [#2357](https://github.com/onevcat/Kingfisher/pull/2357)
+* Fix a compiling issue when building under certain CI environments that triggers a Swift compiler error. @onevcat [#2353](https://github.com/onevcat/Kingfisher/pull/2353)
+
+---
+
+## [8.1.4 - Avoid Recreation](https://github.com/onevcat/Kingfisher/releases/tag/8.1.4) (2025-01-29)
+
+#### Fix
+* Avoid recreating the animated image if the options are the same. This improves the reloading performance. @yeatse [#2347](https://github.com/onevcat/Kingfisher/pull/2347)
+
+---
+
+## [8.1.3 - Failing Size](https://github.com/onevcat/Kingfisher/releases/tag/8.1.3) (2024-12-17)
+
+#### Fix
+* An issue where redrawing a vector image on macOS without specifying the image size could cause an assertion failure. @onevcat @maoxiaoke [#2334](https://github.com/onevcat/Kingfisher/issues/2334)
+
+---
+
+## [8.1.2 - Data Racing](https://github.com/onevcat/Kingfisher/releases/tag/8.1.2) (2024-12-07)
+
+#### Fix
+* Fix a race condition when downloading and reading the image data in session. It should improve the stability. @meisbedi @onevcat [#2327](https://github.com/onevcat/Kingfisher/pull/2327)
+
+---
+
+## [8.1.1 - Clean Completion](https://github.com/onevcat/Kingfisher/releases/tag/8.1.1) (2024-11-20)
+
+#### Fix
+* Resolved an issue where the completion handler could be called multiple times under certain circumstances, potentially leading to crashes if the download task is cancelled. [#2319](https://github.com/onevcat/Kingfisher/pull/2319) @onevcat
+
+---
+
+## [8.1.0 - Live Photo](https://github.com/onevcat/Kingfisher/releases/tag/8.1.0) (2024-10-13)
+
+#### Add
+* Live Photo support. Now you can use the `kf` extension on `PHLivePhotoView` to load a live photo from network. Check [its documentation](https://swiftpackageindex.com/onevcat/kingfisher/master/documentation/kingfisher/kingfisherwrapper/setimage(with:options:completionhandler:)-1to8a) for more information. [#2302](https://github.com/onevcat/Kingfisher/pull/2302) @onevcat
+* A set of new APIs (new resource types, optional parameters for existing methods and error types, etc) for Live Photo support. [#2302](https://github.com/onevcat/Kingfisher/pull/2302) @onevcat
+
+#### Fix
+* Necessary `@MainActor` annotations for `ImageTransition.custom` member. [#2300](https://github.com/onevcat/Kingfisher/pull/2300) @mlight3
+
+---
+
+## [8.0.3 - Animated Image Hitting](https://github.com/onevcat/Kingfisher/releases/tag/8.0.3) (2024-09-21)
+
+#### Fix
+* A regression of iOS 18 that the `KFAnimatedImage` does not receive user interaction. [#2295](https://github.com/onevcat/Kingfisher/issues/2295) @onevcat @danieldaquino
+
+---
+
+## [8.0.2 - Blur Scale](https://github.com/onevcat/Kingfisher/releases/tag/8.0.2) (2024-09-21)
+
+#### Fix
+* An issue the the blurred image has a wrong size if the image contains a scale value other than one. [#2293](https://github.com/onevcat/Kingfisher/pull/2293) @Semty
+
+---
+
+## [8.0.1 - Old Friends Matter](https://github.com/onevcat/Kingfisher/releases/tag/8.0.1) (2024-09-18)
+
+#### Fix
+* A build issue in Xcode 15.2. Now the project builds and runs again in that old Xcode version. [#2289](https://github.com/onevcat/Kingfisher/pull/2289)
+
+---
+
+## [8.0.0 - 8.0.0 - Version 8](https://github.com/onevcat/Kingfisher/releases/tag/8.0.0) (2024-09-17)
+
+#### Add
+* Full Swift 6 support. Now Kingfisher compiles with both Swift 5 and Swift 6 language mode. [#2259](https://github.com/onevcat/Kingfisher/pull/2259) @onevcat
+* Swift Concurrency prepared. All necessary public APIs in Kingfisher are now `async` compatible. Kingfisher is also now built under strict concurrency mode. [#2239](https://github.com/onevcat/Kingfisher/pull/2239) @onevcat
+* Xcode 16 support. Explicitly built modules option is enabled and now Kingfisher can get better build performance under Xcode 16. [#2260](https://github.com/onevcat/Kingfisher/pull/2260) @onevcat
+* Refined documentation and beautified tutorials with DocC. [#2160](https://github.com/onevcat/Kingfisher/pull/2160) @onevcat
+
+#### Fix
+* MD5 is deprecated by the system. Now the hash method for file URL is replaced with SHA256. [#2117](https://github.com/onevcat/Kingfisher/pull/2117) @kmaschke85
+* Now the view extension methods are created in a more generic way, which provides better compatibility and extensibility. [#2244](https://github.com/onevcat/Kingfisher/pull/2244) @Mx-Iris @onevcat
+* Rewrite the blur rendering method without deprecated `UIGraphicsBeginImageContextWithOptions`. [#2274](https://github.com/onevcat/Kingfisher/pull/2274) @onevcat
+* Apply existential any to protocol for Swift 6. [#2283](https://github.com/onevcat/Kingfisher/pull/2283) @qwerty3345
+
+---
+
+## [7.12.0 - Lucky Seven](https://github.com/onevcat/Kingfisher/releases/tag/7.12.0) (2024-06-10)
+
+#### Add
+* Mark the `removeSizeExceededValues` method in `DiskStorage` as `public`. Now it is possible to call this method to trigger a cleanup of the disk cache manually. [#2214](https://github.com/onevcat/Kingfisher/pull/2214) @nickruddeni
+* A new `PHPickerResultImageDataProvider` for loading and caching images from `PHPickerResult`. [#2233](https://github.com/onevcat/Kingfisher/pull/2233) @nuomi1
+* An option of `reducePriorityOnDisappear` for SwiftUI. It sets a lower priority for the image download task when the view disappears, and restore it when re-appears. [#2211](https://github.com/onevcat/Kingfisher/pull/2211) @Aelx-Vaiman
+
+#### Fix
+* Some improvements for documentation grammar and typos. [#2236](https://github.com/onevcat/Kingfisher/pull/2236) @FlyingCaiChong
+* Use `.process` for the `PrivacyInfo.xcprivacy` in SPM to follow the practice suggested by Apple. [#2243](https://github.com/onevcat/Kingfisher/pull/2243) @BorysKhl @onevcat
+* An issue that the file extension was not correctly retrieved for calculating hash file name when `autoExtAfterHashedFileName` is set to `true`. [#2250](https://github.com/onevcat/Kingfisher/pull/2250) @freezy7
+
+---
+
+## [7.11.0 - visionOS for CocoaPods](https://github.com/onevcat/Kingfisher/releases/tag/7.11.0) (2024-02-12)
+
+#### Add
+* Add visionOS as a supported platform when being used in CocoaPods. For other dependency managers, it was already supported from previous versions. [#2205](https://github.com/onevcat/Kingfisher/pull/2205) @onevcat @grachyov
+* A name for background task started for image cache cleanup. [#2201](https://github.com/onevcat/Kingfisher/pull/2201) @antohisorin
+
+---
+
+## [7.10.2 - GIF crash fix](https://github.com/onevcat/Kingfisher/releases/tag/7.10.2) (2024-01-11)
+
+#### Fix
+* An issue that loading the same GIF image in differnet image views may crash the app. [#2194](https://github.com/onevcat/Kingfisher/pull/2194)
+* A build script issue that exported the xcframeworks does not have the correct cert signing. [#2179](https://github.com/onevcat/Kingfisher/pull/2179)
+* In iOS 13 and earlier, the new Swift runtime fails to convert `Any?` to a protocol value. [#2182](https://github.com/onevcat/Kingfisher/pull/2182)
+
+---
+
+## [7.10.1 - Compilation & Infinity](https://github.com/onevcat/Kingfisher/releases/tag/7.10.1) (2023-12-09)
+
+#### Fix
+* Now the CarPlay support (`CPListItem`) compiles again for iOS SDK 14.0 to 14.4. It was because an undocumented API change in the `CPListItem` property. [#2172](https://github.com/onevcat/Kingfisher/pull/2172) @brendonjkding
+* Fix an infinite `View` refreshing loop when `KFImage` is set with `startLoadingBeforeViewAppear` to `true` and the loading keeping fails. [#2169](https://github.com/onevcat/Kingfisher/pull/2169) @onevcat @sisoje @mirkokg
+
+---
+
+## [7.10.0 - Privacy Manifest](https://github.com/onevcat/Kingfisher/releases/tag/7.10.0) (2023-10-29)
+
+#### Add
+* Actually add the privacy manifest files to the xcframework, Swift Package Manager and CocoaPods. [#2122](https://github.com/onevcat/Kingfisher/issues/2122)[#2156](https://github.com/onevcat/Kingfisher/pull/2156) @CloudosaurusRex @NikcN22
+* Enable the modulemap generation and `-Swift.h` header again for ObjC compatibility. [#2138](https://github.com/onevcat/Kingfisher/pull/2138) @yev-kanivets
+
+#### Fix
+* Use the trait collection to determine animated image scale, instead of the deprecated `UIScreen` API. [#2157](https://github.com/onevcat/Kingfisher/pull/2157) @hyun99999
+* An issue that a local AV asset creates multiple disk caches when connected to Xcode during Debug phase. [#2158](https://github.com/onevcat/Kingfisher/pull/2157) @onevcat @elijahdou
+* The disk cache now is still availiable when the whole cache folder is removed by external operations instead of the methods in Kingfisher. [#2162](https://github.com/onevcat/Kingfisher/pull/2162) @onevcat @uclort
+* Some documentation and CI impro/vements.
+
+---
+
+## [7.9.1 - Lastest Xcode 15 beta](https://github.com/onevcat/Kingfisher/releases/tag/7.9.1) (2023-08-26)
+
+#### Fix
+* Update to the terminology for the latest Xcode 15 beta. It prevents building failing and warnings from previous beta versions. [#2123](https://github.com/onevcat/Kingfisher/pull/2123) @simonbs
+* A misused reason in the privacy manifest file. Now Kingfisher should declare the reason of using file creation and access time correctly. (However, the manifest file mechanism of SDK seems not working yet in Xcode 15 beta 7) [#2135](https://github.com/onevcat/Kingfisher/pull/2135) @CloudosaurusRex @onevcat
+* Some warnings which happens when building xcframework. This prevents them from becoming errors in the coming Swift 6. [#2136](https://github.com/onevcat/Kingfisher/pull/2136)
+
+---
+
+## [7.9.0 - visionOS & Xcode 15](https://github.com/onevcat/Kingfisher/releases/tag/7.9.0) (2023-07-29)
+
+#### Add
+* Add visionOS as support target. Now Kingfisher can run natively on visionOS, in both UIKit or SwiftUI mode. [#2103](https://github.com/onevcat/Kingfisher/pull/2103)
+* Add private manifest file (`PrivacyInfo.xcprivacy`) to the project to meet Apple's requirement of describing data collected and use of required reason API. [#2104](https://github.com/onevcat/Kingfisher/pull/2104)
+* Support digital signature in xcframework. Now the xcframework of Kingfisher is signed with the Apple Developer ID of the maintainer team. [#2106](https://github.com/onevcat/Kingfisher/pull/2106)
+* A public initializer of `ImageDownloadResult`. This allows overriding side to construct and return a valid download result. [#2107](https://github.com/onevcat/Kingfisher/pull/2107) @kmaschke85
+
+#### Fix
+* Some documentation fixes.
+
+---
+
+## [7.8.1 - Animated <3 Processor](https://github.com/onevcat/Kingfisher/releases/tag/7.8.1) (2023-06-19)
+
+#### Fix
+* Now the animated image creation from disk cache will use the input processor correctly. [#2099](https://github.com/onevcat/Kingfisher/pull/2099) @yeatse
+
+---
+
+## [7.8.0 - ImageSource Protocol](https://github.com/onevcat/Kingfisher/releases/tag/7.8.0) (2023-06-13)
+
+#### Add
+* Introduce a custom image source provider to enable third-party image processors to utilize `AnimatedImageView`. [#2094](https://github.com/onevcat/Kingfisher/pull/2094) @yeatse
+
+#### Fix
+* Deprecate the `ImageResource` and rename it to `KF.ImageResource`. This triggers a warning when explicitly refering to `ImageResource`, which conflicts to the identical names from Apple's `GeneratedAssetSymbols` or `DeveloperToolsSupport` in Xcode 15. It does not fix the issue automatically, but can help to achieve a smoother transition. [#2092](https://github.com/onevcat/Kingfisher/pull/2092) @JohnnyTseng @rtharston
+
+---
+
+## [7.7.0 - The Last Chance](https://github.com/onevcat/Kingfisher/releases/tag/7.7.0) (2023-05-20)
+
+#### Add
+* Expose a new `imageDownloader(_:didReceive:completionHandler:)` delegate method in `ImageDownloaderDelegate` to allow making `ResponseDisposition` decision to the download task. [#2048](https://github.com/onevcat/Kingfisher/pull/2048) @onevcat
+
+#### Fix
+* Some type conversion warnings which might annoy under Swift 6 compiler. [#2060](https://github.com/onevcat/Kingfisher/pull/2060) [#2063](https://github.com/onevcat/Kingfisher/pull/2063) @zunda-pixel
+* Apply access limitation to the internal `Source.Identifier`. [#2074](https://github.com/onevcat/Kingfisher/pull/2074) @iwill-hwang
+
+---
+
+## [7.6.2 - Fix Dead Loop](https://github.com/onevcat/Kingfisher/releases/tag/7.6.2) (2023-02-23)
+
+#### Fix
+* An issue causes high CPU usage and infinite loop when setting `nil` URL to a `KFImage` when `startLoadingBeforeViewAppear` is also `true`. [#2035](https://github.com/onevcat/Kingfisher/issues/2035) Big thanks to @BobbyRohweder
+* The extension support for `CPListItem` won't set the image back to blank when the loading failing. Now it keeps showing the placeholder, if set. [#2031](https://github.com/onevcat/Kingfisher/pull/2031) @DevVenusK
+
+---
+
+## [7.6.1 - Strict for Compiling](https://github.com/onevcat/Kingfisher/releases/tag/7.6.1) (2023-02-13)
+
+#### Fix
+* A compiling issue that new version of Swift (Swift 5.8) refuses to accept the false-positive optional binding. [#2029](https://github.com/onevcat/Kingfisher/pull/2029) @JetForMe
+
+---
+
+## [7.6.0 - Content Configuration](https://github.com/onevcat/Kingfisher/releases/tag/7.6.0) (2023-02-05)
+
+#### Add
+* Add a `contentConfigure` modifier to `KFImage` and related view types under SwiftUI. This allows you returning a non-image view to finish the configuation and display it as the loading result of `KFImage`. [#2027](https://github.com/onevcat/Kingfisher/pull/2027)
+* Make the `cachePathBlock` public so you can also configure it when creating a custom `DiskStorage.Config`. [#2025](https://github.com/onevcat/Kingfisher/pull/2025) by @zarechnyy
+
+---
+
+## [7.5.0 - Aggressive New Year](https://github.com/onevcat/Kingfisher/releases/tag/7.5.0) (2023-01-08)
+
+#### Add
+* Add a `KFImage` modifier `startLoadingBeforeViewAppear` to allow image loading before SwiftUI view's `onAppear`. This is a workaround for [#1988](https://github.com/onevcat/Kingfisher/issues/1988).
+
+#### Fix
+* Now loading images from local disk also respects the `backgroundDecode` option. [#2009](https://github.com/onevcat/Kingfisher/pull/2009)
+
+---
+
 ## [7.4.1 - Maple Days](https://github.com/onevcat/Kingfisher/releases/tag/7.4.1) (2022-10-26)
 
 #### Fix
